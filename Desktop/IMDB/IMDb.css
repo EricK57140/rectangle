@@ -23,12 +23,12 @@ body {
   justify-content: space-evenly;
   padding: 1%;
 
-  width: 32rem;
-  height: 4rem;
+  width: 34rem;
+  height: 3rem;
   background-color: rgb(43, 46, 44);
   border-radius: 0.6rem;
   border: solid black 2px;
-  margin-top: 4rem;
+  margin-top: 1rem;
 }
 
 .menu>.recherche {
@@ -61,7 +61,7 @@ body {
 }
 
 #displayfilm {
-  width: 31rem;
+  width: 33rem;
   height: 2rem;
   font-size: 1.5rem;
   font-family: Arial, Helvetica, sans-serif;
@@ -164,8 +164,8 @@ button:hover {
 }
 
 .slideshow {
-  margin-left: auto;
-  margin-right: auto;
+  /* margin-left: auto; */
+  margin-right: auto; 
   width: 583px;
   height: 300px;
   overflow: hidden;
@@ -188,7 +188,7 @@ button:hover {
 
 img {
   width: 583px;
-  height: 400px;
+  height: 300px;
 }
 
 
@@ -213,6 +213,7 @@ img {
 
 .flex2 {
   display: flex;
+ justify-content: space-between;
 
 }
 
@@ -230,9 +231,9 @@ img {
 
 
 .desy>button {
-  margin: 4rem 9rem;
-  width: 12rem;
-  height: 4.5rem;
-  font-size: 2rem;
+  margin: 1rem 1rem;
+  width: 10rem;
+  height: 3.5rem;
+  font-size: 1.5rem;
 
 }

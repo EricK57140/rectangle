@@ -11,8 +11,8 @@
 <!-- github test retour salut ca va génial et toi -->
 
 <body>
-    <div class="flex">
-        <div class="flex2">
+    <div class="flex2">
+        <div class="flex">
             <div class="slideshow">
                 <ul>
                     <li><img src="film1.JPG" /></li>
@@ -20,33 +20,42 @@
                     <li><img src="film3.JPG" /></li>
                 </ul>
             </div>
-
-            <div class="flex">
+            <div>
                 <div class="menu">
-                    <div class="recherche">
+                <div class="recherche">
                         <input type="search" id="motCle" placeholder="Tapez un nom de film">
                         <button class="btSearch"
                             onclick="rechercheFilm(0);afficherFilm()">Recherche</button>
                     </div>
-                </div>
-                <div id="displayfilm">Film selectionné:
-                </div>
             </div>
+            <!-- <div id="displayfilm">Film selectionné:
+            </div>  -->
+            <div class="desy">
+                <button onclick="rechercheFilm(1)"> Description</button>
+                <button onClick="rechercheFilm(2)">Synopsis</button>
+                <button onClick="rechercheFilm(3)">Pas Click !</button>
+            </div>
+            </div> 
         </div>
 
-        
+        <div>
+            <div id="displayfilm">Film selectionné:
+            </div> 
 
-        <div class="desy">
-            <button onclick="rechercheFilm(1)"> Description</button>
-            <button onClick="rechercheFilm(2)">Synopsis</button>
-            <button onClick="rechercheFilm(3)">Pas Click !</button>
-        </div>
 
+
+  
         <div class="container">
             <!-- <div id="vignette"></div> -->
             <div id="affiche"></div>
             <div id="synopsis"></div>
         </div>
+
+
+
+
+
+        </div>              
         <div id="bandeau"></div>
     </div>
 
