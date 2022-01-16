@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8" />
+    <title>TP JQuery</title>
+    <link rel="stylesheet" href="IMDb.css" />
+</head>
+
+</head>
+<!-- github test retour salut ca va génial et toi -->
+
+<body>
+    <div class="flex">
+        <div class="flex2">
+            <div class="slideshow">
+                <ul>
+                    <li><img src="film1.JPG" /></li>
+                    <li><img src="film2.JPG" /></li>
+                    <li><img src="film3.JPG" /></li>
+                </ul>
+            </div>
+
+            <div class="flex">
+                <div class="menu">
+                    <div class="recherche">
+                        <input type="search" id="motCle" placeholder="Tapez un nom de film">
+                        <button class="btSearch"
+                            onclick="rechercheFilm(0);afficherFilm()">Recherche</button>
+                    </div>
+                </div>
+                <div id="displayfilm">Film selectionné:
+                </div>
+            </div>
+        </div>
+
+        
+
+        <div class="desy">
+            <button onclick="rechercheFilm(1)"> Description</button>
+            <button onClick="rechercheFilm(2)">Synopsis</button>
+            <button onClick="rechercheFilm(3)">Pas Click !</button>
+        </div>
+
+        <div class="container">
+            <!-- <div id="vignette"></div> -->
+            <div id="affiche"></div>
+            <div id="synopsis"></div>
+        </div>
+        <div id="bandeau"></div>
+    </div>
+
+
+</body>
+
+</html>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+<script>
+
+    $(function () {
+        setInterval(function () {
+            $(".slideshow ul").animate({ marginLeft: -583 }, 1500, function () {
+                $(this).css({ marginLeft: 0 }).find("li:last").after($(this).find("li:first"));
+            })
+        }, 3500);
+    });
+
+
+    // on définit les variables
+    let existeFiche = false;
+    let existeSynopsis = false;
+    let existeBandeau = false;
+    let ref = "";
+    let requete = "";
+    let status = "";
+
+    let apiKey = "k_hgwzc1fp";
+    //let apiKey = "k_mc792s9t";
+    //let apiKey = "k_0fv2a40g";
+
+    // on recherche un film à partir d'un mot-clé
+    function rechercheFilm(choix) {
+
+        let keyword = document.getElementById("motCle").value;
+        if (keyword == "") { return }
+
+        // on récupère l'identifiant du film
+        if (choix == 0 || ref == "") {
+            requete = 'https://imdb-api.com/fr/API/SearchMovie/' + apiKey + '/' + keyword;
+            appelAPI(requete, 0);
+        }
+
+        // on affiche l'erreur renvoyée par l'API puis on quitte
+        if (status != "") {
+            window.alert("Erreur ! Le serveur a répondu : " + status);
+            return;
+        }
+
+        // on quitte si l'identifiant n'a pu être récupéré
+        if (ref == "") { return }
+        //console.log("L'identifiant du film est : " + ref);
+
+        // on récupère les infos du film
+        if (choix > 0) {
+            requete = 'https://imdb-api.com/fr/API/Title/' + apiKey + '/' + ref;
+            appelAPI(requete, choix);
+        }
+
+        return;
+    }
+
+    // on prépare une requête AJAX pour contacter l'API
+    function appelAPI(url, choix) {
+
+        // on définit les paramètres d'accès à l'API
+        var settings = {
+            "url": url,
+            "method": "GET",
+            "timeout": 0,
+        }
+
+        console.log(url);
+
+        // on lance la requête AJAX
+        $.ajax(settings).done(function (response) {
+
+            // on sélectionne la fonction idoine
+            if (choix > 0 && ref != "") {
+                switch (choix) {
+                    case 1:
+                        creationFiche(response);
+                        break;
+                    case 2:
+                        creationSynopsis(response);
+                        break;
+                    case 3:
+                        creationBandeau(response);
+                        break;
+                }
+                return;
+            }
+
+            if (choix == 0) {
+
+                // on récupère une éventuelle erreur
+                status = response.errorMessage;
+                if (status == "") { console.log("aucune erreur") } else { console.log("Status de l'erreur : " + status) }
+
+                if (status != "") { return }
+
+                // on récupère l'identifiant du film
+                ref = "";
+                for (const element of response.results) {
+                    if (ref == "") {
+                        ref = element.id;
+                    }
+                }
+            }
+        });
+        return;
+    }
+
+    // on parse la réponse et on modifie le DOM
+    function creationBandeau(reponse) {
+
+        // on récupère les images des films
+        let x = 0;
+        let picture = [];
+        for (const element of reponse.similars) {
+            if (x < 3) {
+                picture[x] = element.image;
+            }
+            x++;
+        }
+
+        // on supprime l'ancien contenu
+        if (existeBandeau) {
+            var element = document.getElementById("bandeau");
+            while (element.firstChild) {
+                element.removeChild(element.firstChild);
+            }
+            // existeBandeau = false;
+        }
+
+        // on ajoute le contenu dans le DOM
+        let bloc3 = document.getElementById("bandeau");
+
+        let balise4 = document.createElement("img");
+        balise4.src = picture[0];
+        bloc3.appendChild(balise4);
+
+        let balise5 = document.createElement("img");
+        balise5.src = picture[1];
+        bloc3.appendChild(balise5);
+
+        let balise6 = document.createElement("img");
+        balise6.src = picture[2];
+        bloc3.appendChild(balise6);
+
+        existeBandeau = true;
+        return;
+    }
+
+    // on parse la réponse et on modifie le DOM
+    function creationSynopsis(reponse) {
+
+        // on supprime l'ancien contenu
+        if (existeSynopsis) {
+            var element = document.getElementById("synopsis");
+            while (element.firstChild) {
+                element.removeChild(element.firstChild);
+            }
+            // existeSynopsis = false;
+        }
+
+        // on ajoute le contenu dans le DOM
+        let bloc2 = document.getElementById("synopsis");
+
+        let balise2 = document.createElement("u");
+        balise2.innerHTML = "Synopsis :";
+        bloc2.appendChild(balise2);
+
+        let balise3 = document.createElement("p");
+        balise3.innerHTML = reponse.plotLocal;
+        bloc2.appendChild(balise3);
+
+        existeSynopsis = true;
+        return;
+    }
+
+    // on parse la réponse et on modifie le DOM
+    function creationFiche(reponse) {
+
+        // on supprime l'ancien contenu
+        if (existeFiche) {
+            var element = document.getElementById("affiche");
+            while (element.firstChild) {
+                element.removeChild(element.firstChild);
+            }
+            // existeFiche = false;
+        }
+
+        // on ajoute le contenu dans le DOM
+        let bloc1 = document.getElementById("affiche");
+
+        let balise1 = document.createElement("ul");
+        balise1.id = "liste";
+        bloc1.appendChild(balise1);
+
+        let balise101 = document.createElement("li");
+        balise101.innerHTML = 'Titre : ' + reponse.title;
+        liste.appendChild(balise101);
+
+        let balise102 = document.createElement("li");
+        balise102.innerHTML = 'Date de sortie : ' + reponse.releaseDate;
+        liste.appendChild(balise102);
+
+        let balise103 = document.createElement("li");
+        balise103.innerHTML = 'Durée : ' + reponse.runtimeStr;
+        liste.appendChild(balise103);
+
+        let balise104 = document.createElement("li");
+        balise104.innerHTML = 'Genre : ' + reponse.genres;
+        liste.appendChild(balise104);
+
+        let balise105 = document.createElement("li");
+        balise105.innerHTML = 'Réalisateur : ' + reponse.directors;
+        liste.appendChild(balise105);
+
+        let balise106 = document.createElement("li");
+        balise106.innerHTML = 'Acteurs connus : ' + reponse.stars;
+        liste.appendChild(balise106);
+
+        existeFiche = true;
+        return;
+    }
+
+
+    function afficherFilm() {
+
+
+
+        document.getElementById("displayfilm").innerHTML = "Film sélectionné: " + document.getElementById("motCle").value
+
+    }
+
+
+</script>
